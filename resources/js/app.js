@@ -26,7 +26,39 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
+import axios from 'axios';
 const app = new Vue({
     el: '#app',
+	data() {
+		return {
+			email: '',
+			emailStatus: true, //t = available; f = not;
+			validationErrors: [],
+			timeouts: {
+				emailCheck: null,
+			}
+		}
+	},
+	watch: {
+		email: function (newValue, oldValue) {
+			clearTimeout(this.timeouts.emailCheck);
+			this.timeouts.emailCheck = setTimeout(() => {
+				axios.post('lookup-email', {'email' : this.email})
+					.then(response => {
+						console.log(response);
+						if (response.data.validation && response.data.validation === 'success') {
+							this.emailStatus = true;
+							this.validationErrors = [];
+						} else {
+							this.emailStatus = false;
+							this.validationErrors = response.data.errors;
+						}
+					})
+					.catch(error => {
+						console.log('Exception rised:');
+						console.log(error);
+					})
+			}, 500);
+		},
+	}
 });

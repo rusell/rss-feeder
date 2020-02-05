@@ -11356,3 +11356,8 @@ a.text-dark:focus {
   }
 }
 
+.rss-element {
+  margin: 30px 10px;
+  border-bottom: 1px solid black;
+}
+

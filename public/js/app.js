@@ -49495,9 +49495,13 @@ module.exports = function(module) {
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -49523,8 +49527,45 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+
 var app = new Vue({
-  el: '#app'
+  el: '#app',
+  data: function data() {
+    return {
+      email: '',
+      emailStatus: true,
+      //t = available; f = not;
+      validationErrors: [],
+      timeouts: {
+        emailCheck: null
+      }
+    };
+  },
+  watch: {
+    email: function email(newValue, oldValue) {
+      var _this = this;
+
+      clearTimeout(this.timeouts.emailCheck);
+      this.timeouts.emailCheck = setTimeout(function () {
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('lookup-email', {
+          'email': _this.email
+        }).then(function (response) {
+          console.log(response);
+
+          if (response.data.validation && response.data.validation === 'success') {
+            _this.emailStatus = true;
+            _this.validationErrors = [];
+          } else {
+            _this.emailStatus = false;
+            _this.validationErrors = response.data.errors;
+          }
+        })["catch"](function (error) {
+          console.log('Exception rised:');
+          console.log(error);
+        });
+      }, 500);
+    }
+  }
 });
 
 /***/ }),
